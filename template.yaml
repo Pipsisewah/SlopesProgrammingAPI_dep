@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Companies for slopes programming portfolio
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    Domain:
+      DomainName: api.slopesprogramming.com
+      CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
+
+Resources:
+  Companies:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: companies/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        SlopesProgrammingApi:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /companies
+            Method: get
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  SlopesProgrammingApi:
+    Description: "API Gateway endpoint URL for Prod Slopes Programming API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/companies/"
+  Companies:
+    Description: "Companies Lambda Function ARN"
+    Value: !GetAtt Companies.Arn
+  SlopesProgrammingLambdaRole:
+    Description: "Slopes Programming API ARN Role"
+    Value: !GetAtt Companies.Arn

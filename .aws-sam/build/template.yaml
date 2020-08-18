@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Companies for slopes programming portfolio
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    Domain:
+      DomainName: api.slopesprogramming.com
+      CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
+Resources:
+  Companies:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: Companies
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        SlopesProgrammingApi:
+          Type: Api
+          Properties:
+            Path: /companies
+            Method: get
+Outputs:
+  SlopesProgrammingApi:
+    Description: API Gateway endpoint URL for Prod Slopes Programming API
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/companies/
+  Companies:
+    Description: Companies Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - Companies
+      - Arn
+  SlopesProgrammingLambdaRole:
+    Description: Slopes Programming API ARN Role
+    Value:
+      Fn::GetAtt:
+      - Companies
+      - Arn
