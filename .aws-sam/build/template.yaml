@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'Companies for slopes programming portfolio
+Description: 'Slopes Programming API
 
   '
 Globals:
@@ -17,26 +17,41 @@ Resources:
       CodeUri: Companies
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
+      Environment:
+        Variables:
+          DATABASE_NAME: null
       Events:
         SlopesProgrammingApi:
           Type: Api
           Properties:
             Path: /companies
             Method: get
+  Skills:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: Skills
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        SlopesProgrammingApi:
+          Type: Api
+          Properties:
+            Path: /skills
+            Method: get
 Outputs:
   SlopesProgrammingApi:
     Description: API Gateway endpoint URL for Prod Slopes Programming API
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/companies/
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
   Companies:
     Description: Companies Lambda Function ARN
     Value:
       Fn::GetAtt:
       - Companies
       - Arn
-  SlopesProgrammingLambdaRole:
-    Description: Slopes Programming API ARN Role
+  Skills:
+    Description: Skills Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - Companies
+      - Skills
       - Arn

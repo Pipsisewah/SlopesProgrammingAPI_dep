@@ -4,6 +4,9 @@
 # Intellij
 .idea/
 
+# Environment Variables
+.env.json
+
 ### Linux ###
 *~
 

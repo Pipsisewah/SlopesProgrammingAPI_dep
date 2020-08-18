@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Companies for slopes programming portfolio
+  Slopes Programming API
 Globals:
   Function:
     Timeout: 3
@@ -17,11 +17,27 @@ Resources:
       CodeUri: companies/
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
+      Environment:
+        Variables:
+          DATABASE_NAME:
       Events:
         SlopesProgrammingApi:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /companies
+            Method: get
+
+  Skills:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: skills/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        SlopesProgrammingApi:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /skills
             Method: get
 
 Outputs:
@@ -30,10 +46,10 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   SlopesProgrammingApi:
     Description: "API Gateway endpoint URL for Prod Slopes Programming API"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/companies/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
   Companies:
     Description: "Companies Lambda Function ARN"
     Value: !GetAtt Companies.Arn
-  SlopesProgrammingLambdaRole:
-    Description: "Slopes Programming API ARN Role"
-    Value: !GetAtt Companies.Arn
+  Skills:
+    Description: "Skills Lambda Function ARN"
+    Value: !GetAtt Skills.Arn

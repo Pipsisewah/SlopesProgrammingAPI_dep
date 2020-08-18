@@ -17,12 +17,10 @@ let response;
 exports.lambdaHandler = async (event, context) => {
     try {
         // const ret = await axios(url);
-        const databaseName = process.env.DATABASE_NAME;
-        const message = "Companies getter with env variable: " + databaseName;
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
-                message: message,
+                message: 'Skills Getter Endpoint',
                 // location: ret.data.trim()
             })
         }
