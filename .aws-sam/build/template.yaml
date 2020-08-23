@@ -17,9 +17,7 @@ Resources:
       CodeUri: Companies
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
-      Environment:
-        Variables:
-          DATABASE_NAME: null
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
         SlopesProgrammingApi:
           Type: Api
@@ -32,6 +30,7 @@ Resources:
       CodeUri: Skills
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
         SlopesProgrammingApi:
           Type: Api

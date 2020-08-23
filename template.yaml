@@ -17,9 +17,7 @@ Resources:
       CodeUri: companies/
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
-      Environment:
-        Variables:
-          DATABASE_NAME:
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
         SlopesProgrammingApi:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -33,6 +31,7 @@ Resources:
       CodeUri: skills/
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
         SlopesProgrammingApi:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api

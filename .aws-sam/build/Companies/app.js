@@ -14,16 +14,36 @@ let response;
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  * 
  */
+let mysql = require('mysql');
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+    region: 'us-west-2'
+});
+
+const parameterStore = new AWS.SSM();
+const parameterPath = "/slopesprogramming/db/";
 exports.lambdaHandler = async (event, context) => {
     try {
-        // const ret = await axios(url);
-        const databaseName = process.env.DATABASE_NAME;
-        const message = "Companies getter with env variable: " + databaseName;
+        const message = "Companies getter";
+        await loadParameters();
+        let con = mysql.createConnection({
+            host: process.env.URL,
+            user: process.env.HOSTNAME,
+            password: process.env.PASSWORD
+        });
+        let databaseConnectionStatus = "Disconnected";
+        con.connect(function(err) {
+            if (err) throw err;
+            console.log("Connected!");
+            databaseConnectionStatus = "Connected";
+        });
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
                 message: message,
-                // location: ret.data.trim()
+                data: process.env.HOSTNAME,
+                database: databaseConnectionStatus
             })
         }
     } catch (err) {
@@ -33,3 +53,21 @@ exports.lambdaHandler = async (event, context) => {
 
     return response
 };
+
+const loadParameters = async () => {
+    const parameters = await getParameters();
+    for(const param of parameters){
+        if(param.Name === undefined || param.Name === ""){
+            throw Error(
+                "Parameter name is not set for a given credential"
+            );
+        }
+        const name = param.Name.replace(parameterPath, "").toUpperCase();
+        process.env[name] = param.Value;
+    }
+}
+
+const getParameters = async () => {
+    const data = await parameterStore.getParametersByPath({Path: parameterPath}).promise();
+    return data.Parameters;
+}
