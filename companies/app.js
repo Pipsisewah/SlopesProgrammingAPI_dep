@@ -1,15 +1,23 @@
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient({region: "us-west-2"});
 
-exports.handler = async (event, context, callback) => {
-    await addCompany().then(() => {
+exports.lambdaHandler = async (event, context, callback) => {
+    await getAllCompanies().then((companies) => {
         callback(null, {
-            statusCode: 201
+            statusCode: 200,
+            companies: companies
         });
     }).catch((err) => {
         console.log(err);
     });
 };
+
+function getAllCompanies(){
+    const params = {
+        TableName: 'Companies'
+    };
+    return dynamoDB.scan(params).promise();
+}
 
 function addCompany() {
     const params = {
