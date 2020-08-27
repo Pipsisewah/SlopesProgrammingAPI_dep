@@ -14,7 +14,22 @@ Resources:
   Companies:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: companies/
+      CodeUri: Companies/CreateCompany/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
+      Events:
+        SlopesProgrammingApi:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /createCompany
+            Method: POST
+
+Resources:
+  Companies:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Companies/GetAllCompanies/
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
       Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
@@ -23,7 +38,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /companies
-            Method: get
+            Method: GET
 
   Skills:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
