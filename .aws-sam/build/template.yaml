@@ -11,10 +11,23 @@ Globals:
       DomainName: api.slopesprogramming.com
       CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
 Resources:
-  Companies:
+  CreateCompany:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: Companies
+      CodeUri: CreateCompany
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
+      Events:
+        SlopesProgrammingApi:
+          Type: Api
+          Properties:
+            Path: /createCompany
+            Method: POST
+  GetAllCompanies:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetAllCompanies
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
       Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
@@ -42,11 +55,17 @@ Outputs:
     Description: API Gateway endpoint URL for Prod Slopes Programming API
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
-  Companies:
-    Description: Companies Lambda Function ARN
+  CreateCompany:
+    Description: Creates a company
     Value:
       Fn::GetAtt:
-      - Companies
+      - CreateCompany
+      - Arn
+  GetAllCompanies:
+    Description: Gets all companies
+    Value:
+      Fn::GetAtt:
+      - GetAllCompanies
       - Arn
   Skills:
     Description: Skills Lambda Function ARN

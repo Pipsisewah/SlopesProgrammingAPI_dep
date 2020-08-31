@@ -11,7 +11,7 @@ Globals:
       CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
 
 Resources:
-  Companies:
+  CreateCompany:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: Companies/CreateCompany/
@@ -25,8 +25,8 @@ Resources:
             Path: /createCompany
             Method: POST
 
-Resources:
-  Companies:
+
+  GetAllCompanies:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: Companies/GetAllCompanies/
@@ -61,9 +61,12 @@ Outputs:
   SlopesProgrammingApi:
     Description: "API Gateway endpoint URL for Prod Slopes Programming API"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
-  Companies:
-    Description: "Companies Lambda Function ARN"
-    Value: !GetAtt Companies.Arn
+  CreateCompany:
+    Description: "Creates a company"
+    Value: !GetAtt CreateCompany.Arn
+  GetAllCompanies:
+    Description: "Gets all companies"
+    Value: !GetAtt GetAllCompanies.Arn
   Skills:
     Description: "Skills Lambda Function ARN"
     Value: !GetAtt Skills.Arn
