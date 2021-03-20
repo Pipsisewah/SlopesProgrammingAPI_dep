@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Slopes Programming Environemnt Pipeline
+Parameters:
+  EnvironmentName:
+    Type: String
+    Description: The environment this process will run in
+    AllowedValues:
+      - "development"
+      - "production"
+  ServiceName:
+    Type: String
+    Description: Name of the service
+    Default: sp-service
+  RepoName:
+    Type: String
+    Default: sp-service
+
+Conditions:
+  IsDevelopment: !Equals [ !Ref EnvironmentName, "development"]
+
+Resources:
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-${ServiceName}-codebuild-role'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - codebuild.amazonaws.com

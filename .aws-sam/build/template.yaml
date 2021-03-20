@@ -6,70 +6,43 @@ Description: 'Slopes Programming API
 Globals:
   Function:
     Timeout: 3
+    CodeUri: src/functions
   Api:
     Domain:
       DomainName: api.slopesprogramming.com
       CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
 Resources:
-  CreateCompany:
-    Type: AWS::Serverless::Function
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
     Properties:
-      CodeUri: CreateCompany
-      Handler: app.lambdaHandler
-      Runtime: nodejs12.x
-      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
-      Events:
-        SlopesProgrammingApi:
-          Type: Api
-          Properties:
-            Path: /createCompany
-            Method: POST
+      StageName: default
+      Name: slopes-programming-api
+      CacheClusterEnabled: true
+      CacheClusterSize: '1.6'
+      Cors:
+        AllowMethods: '''OPTIONS,POST,GET,PUT,DELETE'''
+        AllowCredentials: false
+        AllowOrigin: '''*'''
+        AllowHeaders: '''*'''
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              AllowHeaders: '''*'''
+              AllowOrigin: '''*'''
+              AllowMethods: '''OPTIONS,POST,GET,PUT,DELETE'''
   GetAllCompanies:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetAllCompanies
-      Handler: app.lambdaHandler
+      Handler: company/app.get
       Runtime: nodejs12.x
       Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
-        SlopesProgrammingApi:
+        GetCompaanies:
           Type: Api
           Properties:
             Path: /companies
             Method: GET
-  Skills:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: Skills
-      Handler: app.lambdaHandler
-      Runtime: nodejs12.x
-      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
-      Events:
-        SlopesProgrammingApi:
-          Type: Api
-          Properties:
-            Path: /skills
-            Method: get
-Outputs:
-  SlopesProgrammingApi:
-    Description: API Gateway endpoint URL for Prod Slopes Programming API
-    Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
-  CreateCompany:
-    Description: Creates a company
-    Value:
-      Fn::GetAtt:
-      - CreateCompany
-      - Arn
-  GetAllCompanies:
-    Description: Gets all companies
-    Value:
-      Fn::GetAtt:
-      - GetAllCompanies
-      - Arn
-  Skills:
-    Description: Skills Lambda Function ARN
-    Value:
-      Fn::GetAtt:
-      - Skills
-      - Arn
+            RestApiId:
+              Ref: ApiGatewayApi
+      CodeUri: GetAllCompanies

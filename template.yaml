@@ -3,70 +3,46 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Slopes Programming API
 Globals:
+
   Function:
     Timeout: 3
+    CodeUri: src/functions
   Api:
     Domain:
       DomainName: api.slopesprogramming.com
       CertificateArn: arn:aws:acm:us-west-2:636903234937:certificate/0a891046-a055-416d-a747-3da6e6bdef36
 
 Resources:
-  CreateCompany:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
     Properties:
-      CodeUri: Companies/CreateCompany/
-      Handler: app.lambdaHandler
-      Runtime: nodejs12.x
-      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
-      Events:
-        SlopesProgrammingApi:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /createCompany
-            Method: POST
-
-
+      StageName: "default"
+      Name: slopes-programming-api
+      CacheClusterEnabled: True
+      CacheClusterSize: '1.6'
+      Cors:
+        AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
+        AllowCredentials: False
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              AllowHeaders: "'*'"
+              AllowOrigin: "'*'"
+              AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
   GetAllCompanies:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: Companies/GetAllCompanies/
-      Handler: app.lambdaHandler
+      Handler: company/app.get
       Runtime: nodejs12.x
       Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
       Events:
-        SlopesProgrammingApi:
+        GetCompaanies:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /companies
             Method: GET
-
-  Skills:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: skills/
-      Handler: app.lambdaHandler
-      Runtime: nodejs12.x
-      Role: arn:aws:iam::636903234937:role/SlopesProgrammingLambdaRole
-      Events:
-        SlopesProgrammingApi:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /skills
-            Method: get
-
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  SlopesProgrammingApi:
-    Description: "API Gateway endpoint URL for Prod Slopes Programming API"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
-  CreateCompany:
-    Description: "Creates a company"
-    Value: !GetAtt CreateCompany.Arn
-  GetAllCompanies:
-    Description: "Gets all companies"
-    Value: !GetAtt GetAllCompanies.Arn
-  Skills:
-    Description: "Skills Lambda Function ARN"
-    Value: !GetAtt Skills.Arn
+            RestApiId:
+              Ref: ApiGatewayApi
